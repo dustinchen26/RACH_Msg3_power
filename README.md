@@ -1,4 +1,4 @@
-# RACH_Msg3_power_Calculator
+# RACH_Msg3_PUSCH_power_Calculator
 online calculate: https://dustinchen26.github.io/RACH_Msg3_power
 
 ## Ref Spec
