@@ -1,0 +1,166 @@
+<!-- 
+  Copyright © [2023] [Dustin_Chen]. All rights reserved.
+  Author: Dustin Chen
+  Email:  Dustin_Chen@compal.com or chuhpsdustin@gmail.com
+-->  
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>RACH_Msg3_power_Calculator</title>
+	<style>
+		input[type="number"] {
+			width: 50px; /* 調整輸入框寬度，可以根據需要調整數值 */
+		}
+	</style>
+<script>
+function calculateRACHMsg3Power() {
+    // 獲取輸入值
+    var preambleReceivedTargetPower = parseFloat(document.getElementById("preambleReceivedTargetPower").value);
+    var msg3DeltaPreamble = parseFloat(document.getElementById("msg3DeltaPreamble").value);
+    var PoUEPUSCH = parseFloat(document.getElementById("PoUEPUSCH").value);
+    var mu = parseFloat(document.getElementById("mu").value);
+    var numRBs = parseFloat(document.getElementById("numRBs").value);
+    var pathloss = parseFloat(document.getElementById("pathloss").value);
+    var alpha = parseFloat(document.getElementById("alpha").value);
+    var deltaTF = parseFloat(document.getElementById("deltaTF").value);
+    var TPCAdjustment = parseFloat(document.getElementById("TPCAdjustment").value);
+
+    // 執行計算
+    var result = preambleReceivedTargetPower + 2 * msg3DeltaPreamble + PoUEPUSCH +
+                 10 * Math.log10(Math.pow(2, mu) * numRBs) + pathloss * alpha + deltaTF + TPCAdjustment;
+
+    // 顯示計算結果
+    var resultElement = document.getElementById("result");
+    var currentResult = "P_PUSCH<br> = Po_nominal_PUSCH + Po_UE_PUSCH + 10*log((2^μ)*M_PUSCH_RB) + PL*α + delta_TF + δ_TPC_adjustment<br>" +
+                        "= (" + preambleReceivedTargetPower + " + 2 * " + msg3DeltaPreamble + ") + " + PoUEPUSCH + " + 10*log((2^" + mu + ")*" + numRBs + ") + " + pathloss + " * " + alpha + " + " + deltaTF + " + " + TPCAdjustment + "<br>" +
+                        "= " + result.toFixed(2) + " dBm<br>";
+    resultElement.innerHTML = currentResult;
+}
+</script>
+</head>
+<body>
+<h1>RACH_Msg3_power_Calculator</h1>
+<p style="margin: 0;">Author: Dustin_Chen, email: <a href="mailto:Dustin_Chen@compal.com" style="line-height: 1;">Dustin_Chen@compal.com</a> or <a href="mailto:chuhpsdustin@gmail.com" style="line-height: 1;">chuhpsdustin@gmail.com</a></p>	
+<p>// Ref: ETSI TS 138 213 chap 7.1.1  UE behaviour, ETSI TS 138 331 msg3-DeltaPreamble </p>
+    <pre>
+      <img src="https://raw.githubusercontent.com/dustinchen26/RACH_Msg3_power/master/formula.png" alt="GitHub Image" width="750">    </pre>
+<label><b>Enter the following parameters and press "Calculate" to get the RACH Msg3 power</b><br></label>
+    <ul>
+        <li>
+            <label for="preambleReceivedTargetPower">preambleReceivedTargetPower (from SIB1):</label>
+            <input type="number" step="any" id="preambleReceivedTargetPower" value="-60" required>
+        </li>
+
+        <li>
+            <label for="msg3DeltaPreamble">msg3-DeltaPreamble (from SIB1  Actual value = field value * 2):</label>
+            <input type="number" step="any" id="msg3DeltaPreamble" value="0" required>
+        </li>
+
+        <li>
+            <label for="PoUEPUSCH">Po_UE_PUSCH (0: Type-1 random access):</label>
+            <input type="number" step="any" id="PoUEPUSCH" value="0" required>
+        </li>
+
+        <li>
+            <label for="mu">μ (38.211 Table 4.2-1, μ=0 represent 15 kHz, μ=1 represent 30 kHz):</label>
+            <input type="number" step="any" id="mu" value="1" required>
+        </li>
+
+        <li>
+            <label for="numRBs">Num_RBs (from [0xB883]):</label>
+            <input type="number" step="any" id="numRBs" value="1" required>
+        </li>
+
+        <li>
+            <label for="pathloss">Pathloss (from [0xB8D2]):</label>
+            <input type="number" step="any" id="pathloss" value="34" required>
+        </li>
+
+        <li>
+            <label for="alpha">α (if no msgA-Alpha, msg3-Alpha, then α=1):</label>
+            <input type="number" step="any" id="alpha" value="1" required>
+        </li>
+
+        <li>
+            <label for="deltaTF">delta_TF (from [0xB8D2]):</label>
+            <input type="number" step="any" id="deltaTF" value="0" required>
+        </li>
+
+        <li>
+            <label for="TPCAdjustment">TPC_Adjustment (from [0xB8D2]):</label>
+            <input type="number" step="any" id="TPCAdjustment" value="-6" required>
+        </li>
+    </ul>
+
+    <button type="button" onclick="calculateRACHMsg3Power()">Calculate</button>
+<p id="result"></p>
+<pre>
+==============================================================================================================================
+P_PUSCH (PUSCH / T_C_RNTI / RACH_Msg3_power)
+= Po_nominal_PUSCH + Po_UE_PUSCH + 10*log((2^μ)*M_PUSCH_RB) + PL*α + delta_TF + δ_TPC_adjustment
+= (preambleReceivedTargetPower + 2 x msg3-DeltaPreamble) + Po_UE_PUSCH + 10*log((2^μ)*Num_RBs) + Pathloss * α + delta_TF + TPC_Adjustment
+
+// subcarrierSpacing kHz30: μ=1, preambleReceivedTargetPower=-60, msg3-DeltaPreamble=0
+07:59:43.496	[0xB821]	BCCH_DL_SCH / SystemInformationBlockType1
+            frequencyInfoDL 
+            {
+              scs-SpecificCarrierList 
+              {
+                {
+                  offsetToCarrier 0,
+                  subcarrierSpacing kHz30, //μ=1 (SCS configuration)
+                  carrierBandwidth 273
+                }
+              }
+              rach-ConfigCommon setup : 
+                {
+                  rach-ConfigGeneric 
+                  {
+                    prach-ConfigurationIndex 148,
+                    msg1-FDM one,
+                    msg1-FrequencyStart 0,
+                    zeroCorrelationZoneConfig 6,
+                    preambleReceivedTargetPower -60, //preambleReceivedTargetPower=-60
+                    preambleTransMax n10,
+                    powerRampingStep dB2,
+                    ra-ResponseWindow sl80
+                  },
+                },
+              pusch-ConfigCommon setup : 
+                {
+                  msg3-DeltaPreamble 0, //msg3-DeltaPreamble=0
+                  p0-NominalWithGrant -70
+                },
+
+// (804,19) T_C_RNTI, Num RBs=1
+07:59:43.625	[0xB883]	NR5G MAC UL Physical Channel Schedule Report
+   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   |   |                     |       |Carriers                                                                                                                                      
+   |   |                     |       |       |              |                                   |      |                                                                            
+   |   |                     |       |       |              |                                   |      |PUSCH Data                                                                  
+   |   |                     |       |       |              |                                   |      |            |      |       |    |    |                |    |       |       |
+   |   |                     |       |       |              |                                   |Dual  |            |      |       |    |    |                |DMRS|       |       |
+   |   |System Time          |Num    |Carrier|              |                                   |Pol   |Is Second   |Start |Num    |HARQ|    |                |Add |RB     |       |
+   |#  |Slot|Numerology|Frame|Carrier|ID     |RNTI Type     |Phychan Bit Mask                   |Status|Phychan     |Symbol|Symbols|ID  |MCS |MCS Table       |Pos |Start  |Num RBs|
+   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   |  0|  19|     30kHz|  804|      1|      0|      T_C_RNTI|                              PUSCH|     0|           0|     0|     12|   0|   8|           64QAM|   2|      0|      1|
+   
+// (804,19) Pathloss=34, delta_TF=0, TPC_Adjustment=-6 => PUSCH Transmit Power = -29
+07:59:43.644	[0xB8D2]	NR5G LL1 FW MAC TX IU Power
+         System Frame Number       = 804
+         Slot Number               = 19
+      Power Info
+         --------------------------------------------------------------------------
+         |   |       |       |CarrierIdType                                        
+         |   |       |       |PUSCH Data                                          |
+         |   |Carrier|Channel|Transmit|        |TPC       |PHR |Delta|Is  |Minimum|
+         |#  |Id     |Type   |Power   |Pathloss|Adjustment|MTPL|TF   |Msg3|Power  |
+         --------------------------------------------------------------------------
+         |  0|      0|  PUSCH|     -29|      34|        -6|  21|    0|   1|    -38|
+		 
+		 
+</pre>
+
+</body>
+</html>
