@@ -12,6 +12,12 @@
 		input[type="number"] {
 			width: 50px; /* 調整輸入框寬度，可以根據需要調整數值 */
 		}
+		
+	body {
+      line-height: 1.2;
+      font-size: 14px;
+      font-family: Roboto, sans-serif;
+    }		
 	</style>
 <script>
 function calculateRACHMsg3Power() {
@@ -40,12 +46,19 @@ function calculateRACHMsg3Power() {
 </script>
 </head>
 <body>
-<h1>RACH_Msg3_PUSCH_power_Calculator</h1>
+<h2>RACH_Msg3_PUSCH_power_Calculator</h2>
 <p style="margin: 0;">Author: Dustin_Chen, email: <a href="mailto:Dustin_Chen@compal.com" style="line-height: 1;">Dustin_Chen@compal.com</a> or <a href="mailto:chuhpsdustin@gmail.com" style="line-height: 1;">chuhpsdustin@gmail.com</a></p>	
-<p>// Ref: ETSI TS 138 213 chap 7.1.1  UE behaviour, ETSI TS 138 331 msg3-DeltaPreamble </p>
-    <pre>
-      <img src="https://raw.githubusercontent.com/dustinchen26/RACH_Msg3_power/master/formula.png" alt="GitHub Image" width="750">    </pre>
-<label><b>Enter the following parameters and press "Calculate" to get the RACH Msg3 power</b><br></label>
+
+<ul>
+	<li><b>3GPP Spec</b>
+		<ul>
+			<li>
+				ETSI TS 138 213 chap 7.1.1  UE behaviour, ETSI TS 138 331 msg3-DeltaPreamble
+			</li>
+			 <img src="https://raw.githubusercontent.com/dustinchen26/RACH_Msg3_power/master/formula.png" alt="GitHub Image" width="750">
+		</ul>
+	</li>
+	<li><b>Enter the following parameters and press "Calculate" to get the RACH Msg3 power</b>
     <ul>
         <li>
             <label for="preambleReceivedTargetPower">preambleReceivedTargetPower (from SIB1):</label>
@@ -95,6 +108,11 @@ function calculateRACHMsg3Power() {
 
     <button type="button" onclick="calculateRACHMsg3Power()">Calculate</button>
 <p id="result"></p>
+	</li>	
+</ul>
+
+       
+
 <pre>
 ==============================================================================================================================
 P_PUSCH (PUSCH / T_C_RNTI / RACH_Msg3_power)
